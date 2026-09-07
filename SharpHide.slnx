@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="SharpHide/SharpHide.csproj" />
   <Project Path="ILTestLand/ILTestLand.csproj" />
+  <Project Path="ILTestLand.Wpf/ILTestLand.Wpf.csproj" />
 </Solution>
