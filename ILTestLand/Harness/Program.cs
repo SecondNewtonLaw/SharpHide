@@ -11,6 +11,7 @@ namespace ILTestLand;
  */
 
 internal static class Program {
+    private const int ExpectedCheckCount = 3200;
     private static int _failures;
     private static int _checks;
 
@@ -241,6 +242,30 @@ internal static class Program {
         Check("rt.encoding.utf8", Utf8Round("héllo🦊"), "héllo🦊");
         Check("rt.encoding.bytes", Encoding.UTF8.GetBytes("A").Length, 1);
 
+        Section("virtualization");
+        Check("vm.loop.branch", VirtualizationCases.Arithmetic(7), 40);
+        Check("vm.ref.generic.gc", VirtualizationCases.Aliases(), "changed");
+        Check("vm.filter.finally", VirtualizationCases.Exceptions(true), 1234);
+        Check("vm.finally.normal", VirtualizationCases.Exceptions(false), 13);
+        Check("vm.stackalloc.gc", VirtualizationCases.StackMemory(3), 52);
+        Check("vm.i8", VirtualizationCases.Wide(1L << 40), (1L << 53) + (1L << 33));
+        Check("vm.typed.reference", VirtualizationCases.TypedReference(35), 42);
+        Check("vm.span.copy.gc", VirtualizationCases.Spans("alive"), "alive!:replacement");
+
+        Section("handwritten-cases");
+        var handwritten = HandwrittenCases.Run(CheckStress);
+        Console.WriteLine($"[PASS] handwritten.cases => {handwritten}");
+
+        Section("stress-matrix");
+        var matrix = StressCases.CheckCount - handwritten;
+        StressCases.Run(CheckStress, matrix);
+        Console.WriteLine($"[PASS] stress.matrix => {matrix}");
+
+        if (_checks != ExpectedCheckCount) {
+            _failures++;
+            Console.WriteLine($"[FAIL] check.count => {_checks}, expected {ExpectedCheckCount}");
+        }
+
         Console.WriteLine(_failures == 0
             ? $"ALL PASS ({_checks} checks)"
             : $"{_failures}/{_checks} FAILURE(S)");
@@ -252,15 +277,27 @@ internal static class Program {
     private static void Check<T>(string name, T actual, T expected) {
         _checks++;
         var ok = EqualityComparer<T>.Default.Equals(actual, expected);
-        if (!ok) _failures++;
+        if (!ok)
+            _failures++;
         Console.WriteLine($"[{(ok ? "PASS" : "FAIL")}] {name} => {actual}");
     }
 
     private static void CheckClose(string name, double actual, double expected, double epsilon = 1e-9) {
         _checks++;
         var ok = Math.Abs(actual - expected) <= epsilon;
-        if (!ok) _failures++;
+        if (!ok)
+            _failures++;
         Console.WriteLine($"[{(ok ? "PASS" : "FAIL")}] {name} => {actual}");
+    }
+
+    private static void CheckStress(string name, object? actual, object? expected) {
+        _checks++;
+        var ok = Equals(actual, expected);
+        if (!ok)
+            _failures++;
+        Console.WriteLine(ok
+            ? $"[PASS] {name} => {actual}"
+            : $"[FAIL] {name} => {actual}, expected {expected}");
     }
 
     private static string Concat(string a, string b) => a + b + "d";
@@ -277,13 +314,15 @@ internal static class Program {
 
     private static string BuildRepeat(string unit, int times) {
         var builder = new StringBuilder();
-        for (var i = 0; i < times; i++) builder.Append(unit);
+        for (var i = 0; i < times; i++)
+            builder.Append(unit);
         return builder.ToString();
     }
 
     private static int WhileCount() {
         var n = 0;
-        while (n < 5) n++;
+        while (n < 5)
+            n++;
         return n;
     }
 
@@ -312,7 +351,8 @@ internal static class Program {
         var count = 0;
         for (var i = 0; i < 3; i++)
         for (var j = 0; j < 3; j++) {
-            if (j == 2) break;
+            if (j == 2)
+                break;
             count++;
         }
 
@@ -322,7 +362,8 @@ internal static class Program {
     private static int ContinueSum() {
         var total = 0;
         for (var i = 1; i <= 10; i++) {
-            if (i % 2 == 0) continue;
+            if (i % 2 == 0)
+                continue;
             total += i;
         }
 
@@ -350,7 +391,8 @@ internal static class Program {
 
     private static int SumTo(int n) {
         var total = 0;
-        for (var i = 1; i <= n; i++) total += i;
+        for (var i = 1; i <= n; i++)
+            total += i;
         return total;
     }
 
@@ -387,13 +429,15 @@ internal static class Program {
     private static int ListOps() {
         var list = new List<int> { 1, 2, 3 };
         var total = 0;
-        foreach (var value in list) total += value;
+        foreach (var value in list)
+            total += value;
         return total;
     }
 
     private static int SumList(List<int> values) {
         var total = 0;
-        foreach (var value in values) total += value;
+        foreach (var value in values)
+            total += value;
         return total;
     }
 
@@ -427,7 +471,8 @@ internal static class Program {
 
     private static string SortedFirst() {
         var map = new SortedDictionary<string, int> { ["b"] = 2, ["a"] = 1, ["c"] = 3 };
-        foreach (var key in map.Keys) return key;
+        foreach (var key in map.Keys)
+            return key;
         return string.Empty;
     }
 
@@ -437,7 +482,8 @@ internal static class Program {
         list.AddLast(2);
         list.AddLast(3);
         var total = 0;
-        foreach (var value in list) total += value;
+        foreach (var value in list)
+            total += value;
         return total;
     }
 
@@ -470,7 +516,8 @@ internal static class Program {
     private static int RangeSum() {
         int[] array = { 10, 20, 30, 40, 50 };
         var total = 0;
-        foreach (var value in array[1..4]) total += value;
+        foreach (var value in array[1..4])
+            total += value;
         return total;
     }
 
@@ -481,9 +528,11 @@ internal static class Program {
 
     private static int StackAllocSum() {
         Span<int> span = stackalloc int[5];
-        for (var i = 0; i < span.Length; i++) span[i] = i + 1;
+        for (var i = 0; i < span.Length; i++)
+            span[i] = i + 1;
         var total = 0;
-        foreach (var value in span) total += value;
+        foreach (var value in span)
+            total += value;
         return total;
     }
 
@@ -667,14 +716,16 @@ internal static class Program {
 
     private static int SumBytes(byte[] data) {
         var total = 0;
-        foreach (var value in data) total += value;
+        foreach (var value in data)
+            total += value;
         return total;
     }
 
     private static int TotalArea() {
         IShape[] shapes = [new Square(5), new Rectangle(3, 4)];
         var total = 0;
-        foreach (var shape in shapes) total += shape.Area();
+        foreach (var shape in shapes)
+            total += shape.Area();
         return total;
     }
 
@@ -756,18 +807,21 @@ internal static class Program {
 
     private static IEnumerable<int> YieldBreak() {
         for (var i = 1; i <= 10; i++) {
-            if (i > 3) yield break;
+            if (i > 3)
+                yield break;
             yield return i;
         }
     }
 
     private static IEnumerable<int> Naturals() {
         var i = 1;
-        while (true) yield return i++;
+        while (true)
+            yield return i++;
     }
 
     private static IEnumerable<int> CountUp(int n) {
-        for (var i = 1; i <= n; i++) yield return i;
+        for (var i = 1; i <= n; i++)
+            yield return i;
     }
 
     private static string NameofCheck() {
@@ -801,7 +855,8 @@ internal static class Counter {
     public static readonly int Value;
 
     static Counter() {
-        for (var i = 1; i <= 10; i++) Value += i;
+        for (var i = 1; i <= 10; i++)
+            Value += i;
     }
 }
 
@@ -862,7 +917,8 @@ internal sealed class Ring {
 
     public Ring(int size) {
         _data = new int[size];
-        for (var i = 0; i < size; i++) _data[i] = i * i;
+        for (var i = 0; i < size; i++)
+            _data[i] = i * i;
     }
 
     public int this[int index] => _data[index % _data.Length];

@@ -1,5 +1,10 @@
 <Solution>
-  <Project Path="SharpHide/SharpHide.csproj" />
+  <Project Path="SharpHide.Core/SharpHide.Core.csproj" />
+  <Project Path="SharpHide.Vendor/SharpHide.Vendor.csproj" />
+  <Project Path="SharpHide.Vm/SharpHide.Vm.csproj" />
+  <Project Path="SharpHide.Cli/SharpHide.Cli.csproj" />
+  <Project Path="SharpHide.Tests/SharpHide.Tests.csproj" />
   <Project Path="ILTestLand/ILTestLand.csproj" />
+  <Project Path="ILTestLand.WinForms/ILTestLand.WinForms.csproj" />
   <Project Path="ILTestLand.Wpf/ILTestLand.Wpf.csproj" />
 </Solution>

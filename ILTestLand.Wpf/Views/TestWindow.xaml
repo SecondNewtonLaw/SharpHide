@@ -1,0 +1,19 @@
+<Window x:Class="ILTestLand.Wpf.TestWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:ILTestLand.Wpf"
+        Title="sharphide-wpf" Height="240" Width="320">
+    <Window.Resources>
+        <SolidColorBrush x:Key="Accent" Color="#FF3366CC" />
+        <local:UpperConverter x:Key="Upper" />
+    </Window.Resources>
+    <StackPanel>
+        <TextBox x:Name="NameBox" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock x:Name="GreetingText" Text="{Binding Greeting}" />
+        <TextBlock x:Name="UpperText" Text="{Binding Name, Converter={StaticResource Upper}}" />
+        <TextBlock x:Name="CountText" Text="{Binding Count}" />
+        <Button x:Name="IncButton" Content="+1" Click="OnIncrement" />
+        <Border x:Name="AccentBorder" Background="{StaticResource Accent}" Height="10" />
+        <ItemsControl x:Name="ItemsList" ItemsSource="{Binding Items}" />
+    </StackPanel>
+</Window>

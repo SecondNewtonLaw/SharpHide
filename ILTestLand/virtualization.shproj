@@ -1,0 +1,29 @@
+{
+  "Input": "ILTestLand/bin/Release/net10.0/ILTestLand.dll",
+  "Output": "ILTestLand/bin/Release/net10.0/Virtualized-ILTestLand.dll",
+  "Seed": 2026,
+  "VirtualizationKey": "iltestland-build-key",
+  "Protections": {
+    "virtualization": { "Enabled": true, "Options": { "runtime-errors": 0, "bytecode-rounds": 64, "instances": 3, "opcode-scrambling": 1, "bytecode-scrambling": 1, "payload-auth": 1, "payload-algorithm": 2, "payload-max-size": 1048576, "regions-strict": 0 } },
+    "constants-pool": { "Enabled": true, "Options": { "max-size": 2000, "rounds": 64 } },
+    "number-encryption": { "Enabled": true, "Options": { "handlers": 12, "max-size": 2000, "layers": 4, "complexity": 3 } },
+    "string-encryption": { "Enabled": true, "Options": { "handlers": 2, "junk-chance": 0, "virtualize-chance": 1, "virtualize-max-size": 4000 } },
+    "resource-encryption": { "Enabled": true },
+    "user-rename": { "Enabled": true },
+    "rename-injected": { "Enabled": true },
+    "control-flow": { "Enabled": true, "Options": { "min-blocks": 2, "min-size": 6, "max-size": 2400, "bogus-states": 6, "opaque-depth": 4, "decrypt-hash-chance": 0.65, "handlers": 12 } },
+    "anti-debug": { "Enabled": false },
+    "anti-dump": { "Enabled": false },
+    "anti-tamper": { "Enabled": true, "Options": { "strict": 1, "diagnostics": 0, "method-checks": 4 } },
+    "call-hiding": { "Enabled": false },
+    "delegate-hiding": { "Enabled": false },
+    "member-splitting": { "Enabled": false },
+    "exception-flow": { "Enabled": false },
+    "opaque-predicate": { "Enabled": false },
+    "dead-code": { "Enabled": false },
+    "junk-method": { "Enabled": false },
+    "junk-type": { "Enabled": false },
+    "junk-attributes": { "Enabled": false },
+    "debugger-hidden": { "Enabled": false }
+  }
+}
